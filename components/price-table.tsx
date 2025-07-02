@@ -1,10 +1,12 @@
 "use client"
 
 import { Badge } from "@/components/ui/badge"
+import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
-import { TrendingUp, TrendingDown, Minus } from "lucide-react"
+import { TrendingUp, TrendingDown, Minus, ShoppingCart, Check } from "lucide-react"
 import { Skeleton } from "@/components/ui/skeleton"
+import { useCart } from "@/contexts/cart-context"
 
 interface PriceData {
   id: string
@@ -25,6 +27,8 @@ interface PriceTableProps {
 }
 
 export function PriceTable({ data, loading }: PriceTableProps) {
+  const { addToCart, isInCart, getItemQuantity } = useCart()
+
   const getTrendIcon = (change: number) => {
     if (change > 0) return <TrendingUp className="h-4 w-4 text-red-500" />
     if (change < 0) return <TrendingDown className="h-4 w-4 text-green-500" />
@@ -35,6 +39,17 @@ export function PriceTable({ data, loading }: PriceTableProps) {
     if (change > 0) return "text-red-600"
     if (change < 0) return "text-green-600"
     return "text-gray-600"
+  }
+
+  const handleAddToCart = (item: PriceData) => {
+    addToCart({
+      id: item.id,
+      name: item.name,
+      currentPrice: item.currentPrice,
+      unit: item.unit,
+      category: item.category,
+      source: item.source
+    })
   }
 
   if (loading) {
@@ -71,6 +86,7 @@ export function PriceTable({ data, loading }: PriceTableProps) {
                 <TableHead>% Change</TableHead>
                 <TableHead>Source</TableHead>
                 <TableHead>Updated</TableHead>
+                <TableHead>Cart</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -107,6 +123,35 @@ export function PriceTable({ data, loading }: PriceTableProps) {
                   </TableCell>
                   <TableCell className="text-xs text-gray-500">
                     {new Date(item.lastUpdated).toLocaleDateString()}
+                  </TableCell>
+                  <TableCell>
+                    {isInCart(item.id) ? (
+                      <div className="flex items-center space-x-2">
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => handleAddToCart(item)}
+                          className="h-8 text-xs"
+                        >
+                          <ShoppingCart className="h-3 w-3 mr-1" />
+                          +1
+                        </Button>
+                        <div className="flex items-center text-xs text-green-600">
+                          <Check className="h-3 w-3 mr-1" />
+                          {getItemQuantity(item.id)}
+                        </div>
+                      </div>
+                    ) : (
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => handleAddToCart(item)}
+                        className="h-8 text-xs"
+                      >
+                        <ShoppingCart className="h-3 w-3 mr-1" />
+                        Add
+                      </Button>
+                    )}
                   </TableCell>
                 </TableRow>
               ))}

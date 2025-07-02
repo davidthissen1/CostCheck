@@ -7,10 +7,12 @@ import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { Search, TrendingUp, TrendingDown, Minus, RefreshCw, ChevronLeft, ChevronRight } from "lucide-react"
+import { Search, TrendingUp, TrendingDown, Minus, RefreshCw, ChevronLeft, ChevronRight, ShoppingCart } from "lucide-react"
 import { PriceChart } from "@/components/price-chart"
 import { PriceTable } from "@/components/price-table"
 import { PriceStats } from "@/components/price-stats"
+import { ShoppingCart as ShoppingCartComponent } from "@/components/shopping-cart"
+import { useCart } from "@/contexts/cart-context"
 
 interface PriceData {
   id: string
@@ -27,6 +29,7 @@ interface PriceData {
 }
 
 export function PriceDashboard() {
+  const { getTotalItems } = useCart()
   const [priceData, setPriceData] = useState<PriceData[]>([])
   const [filteredData, setFilteredData] = useState<PriceData[]>([])
   const [searchTerm, setSearchTerm] = useState("")
@@ -171,6 +174,17 @@ export function PriceDashboard() {
         <TabsList>
           <TabsTrigger value="table">Price Table</TabsTrigger>
           <TabsTrigger value="charts">Price Charts</TabsTrigger>
+          <TabsTrigger value="cart">
+            <div className="flex items-center space-x-2">
+              <ShoppingCart className="h-4 w-4" />
+              <span>Shopping Cart</span>
+              {getTotalItems() > 0 && (
+                <Badge variant="secondary" className="ml-1 px-1.5 py-0.5 text-xs">
+                  {getTotalItems()}
+                </Badge>
+              )}
+            </div>
+          </TabsTrigger>
         </TabsList>
 
         <TabsContent value="table" className="space-y-4">
@@ -357,6 +371,10 @@ export function PriceDashboard() {
               </CardContent>
             </Card>
           )}
+        </TabsContent>
+
+        <TabsContent value="cart" className="space-y-4">
+          <ShoppingCartComponent />
         </TabsContent>
       </Tabs>
     </div>
