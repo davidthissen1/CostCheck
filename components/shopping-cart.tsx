@@ -8,6 +8,7 @@ import { Badge } from "@/components/ui/badge"
 import { Separator } from "@/components/ui/separator"
 import { useCart } from "@/contexts/cart-context"
 import { ShoppingCart as ShoppingCartIcon, Trash2, Plus, Minus, ShoppingBag } from "lucide-react"
+import { AIRecommendations } from "@/components/ai-recommendations"
 
 export function ShoppingCart() {
   const { 
@@ -220,6 +221,9 @@ export function ShoppingCart() {
           </div>
         </CardContent>
       </Card>
+
+      {/* AI Recommendations */}
+      <AIRecommendations />
 
       {/* Shopping Tips */}
       <Card className="bg-blue-50 border-blue-200">
